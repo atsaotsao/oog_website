@@ -5,8 +5,7 @@ import matter from 'gray-matter';
 import { marked } from 'marked';
 import "../styles/global.css"; // Tailwind CSS
 
-const NOTES_DIR = './content';
-
+const NOTES_DIR = path.resolve('./content'); // ✅ Absolute path for Netlify
 
 let contentHtml = '';
 let title = 'Home';
