@@ -1,0 +1,52 @@
+export const prerender = false;
+---
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+
+const { slug } = Astro.params;
+
+const NOTES_DIR = '/Users/andrewtsao/Library/Mobile Documents/iCloud~md~obsidian/Documents/True_Bro/🌞 My Website';
+
+let contentHtml = '';
+let title = slug;
+let pubDate = '';
+
+try {
+  const filePath = path.join(NOTES_DIR, `${slug}.md`);
+  const rawContent = fs.readFileSync(filePath, 'utf-8');
+  const parsed = matter(rawContent);
+
+  contentHtml = marked.parse(parsed.content);
+  title = parsed.data?.title ?? slug;
+  pubDate = parsed.data?.pubDate ?? '';
+} catch (err) {
+  contentHtml = `<p style="color:red;">Error loading content: ${err.message}</p>`;
+}
+---
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{title}</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+        max-width: 700px;
+        margin: auto;
+      }
+      article {
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/">← Back to Home</a>
+    <h1>{title}</h1>
+    {pubDate && <p><em>{new Date(pubDate).toString()}</em></p>}
+    <hr />
+    <article set:html={contentHtml}></article>
+  </body>
+</html>
